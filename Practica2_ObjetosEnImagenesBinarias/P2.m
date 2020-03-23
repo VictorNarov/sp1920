@@ -1,9 +1,10 @@
 clear all, clc;
-Imagen = imread('ImagenBinaria.tif');
+Imagen = imread('imagen_binaria.png');
 
-% 3 Genera  una  imagen  en  color,  donde  se  visualice 
- % con  un  color  diferente  los  objetos presentes  en  la  imagen
-
+% ----------------------------------------------------------------------------------------
+% 3. Genera  una  imagen  en  color,  donde  se  visualice 
+%   con  un  color  diferente  los  objetos presentes  en  la  imagen
+% ----------------------------------------------------------------------------------------
  
 [Ietiq N] = funcion_etiquetar_v2(Imagen>100, 8, "fila");
 imtool(Ietiq)
@@ -26,11 +27,11 @@ Icolor = cat(3,Icolor_R,Icolor_G,Icolor_B);
 
 imtool(Icolor)
 
-
+% ----------------------------------------------------------------------------------------
 % 4.Genera una imagen donde se localicen, a través de su centroide,
 % los objetos de mayor y menor área
 % (ver documentación para la definición de área y centroide).
-
+% ----------------------------------------------------------------------------------------
 areas = calcula_areas(Ietiq)            %Obtenemos los valores de las areas de los objetos
 
 obj_mayor = find(areas==max(areas))     %Obtenemos el indice del mayor y menor objeto
@@ -52,6 +53,12 @@ Imagen_centroides(int32(centroide_menor(1)), int32(centroide_menor(2)), 2) = 0;
 Imagen_centroides(int32(centroide_menor(1)), int32(centroide_menor(2)), 3) = 0;
 
 figure, imshow(Imagen_centroides) %Visualizar la imagen con los centroides del mayor y menor objeto en rojo
+
+% ----------------------------------------------------------------------------------------
+% 5.Genera una imagen binaria donde sólo se visualicen los dos objetos deárea mayor.
+% ----------------------------------------------------------------------------------------
+imshow(filtra_objetos(Imagen,5000))
+
 
 
 
