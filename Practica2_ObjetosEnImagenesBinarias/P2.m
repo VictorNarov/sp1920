@@ -60,5 +60,20 @@ figure, imshow(Imagen_centroides) %Visualizar la imagen con los centroides del m
 imshow(filtra_objetos(Imagen,5000))
 
 
+%% Funciones de matlab
+
+[Ietiq2 N] = bwlabel(Imagen); %Similar a funcion_etiquetar_v2(Imagen,8,"columna";
+N
+imtool(Ietiq2);
+
+stats=regionprops(Ietiq2,'Area','Centroid'); 
+% stats.Area contiene información de las áreas de cada objeto
+% stats.Centroid -contiene información de la coordenada x (columna)
+% y la coordenada y (fila) del centroide de cada objeto
 
 
+MatrizBinaria_ObjetosGrandes=bwareaopen(Imagen,5000); 
+%se eliminan de la MatrizBinaria todos las agrupaciones de píxeles a “1” 
+% compuestas por menos de NumPixpixeles.
+
+imtool(MatrizBinaria_ObjetosGrandes);
