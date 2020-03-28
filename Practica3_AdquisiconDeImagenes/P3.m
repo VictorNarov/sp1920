@@ -12,12 +12,10 @@ datos=imaqhwinfo('winvideo')
 video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
 video.ReturnedColorSpace = 'rgb';
 
-
 % Forma de trabajo: grabación continua
 video.TriggerRepeat=Inf;
 video.FramesPerTrigger=1; % 2 frames por disparo
 video.FrameGrabInterval=6; %30/6=5fps 
-
 
 preview(video)
 I = getsnapshot(video);
@@ -116,5 +114,101 @@ subplot(2,2,2), imshow(cell2mat(Imagen{1})),
 subplot(2,2,3), imshow(cell2mat(Imagen{2})),
 subplot(2,2,4), imshow(cell2mat(Imagen{3}));
 
+
+%% EJERCICIO 3
+% La  escena inicialmente oscurecida y  aclarándose progresivamente
+
+% Configuración dispositivo de captura
+video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
+video.ReturnedColorSpace = 'rgb';
+
+% Forma de trabajo: grabación continua
+video.TriggerRepeat=Inf;
+video.FramesPerTrigger=1; % 2 frames por disparo
+video.FrameGrabInterval=6; %30/6=5fps 
+
+preview(video)
+
+% Capturamos 50 frames (10s)
+start(video);
+gamma = 2.5;
+
+while(video.FramesAcquired < 50)
+    
+    I=getdata(video,1);
+    imshow(imadjust(I,[],[],gamma));
+    
+    gamma = gamma-0.05;
+
+end
+
+stop(video);
+
+%% EJERCICIO 4
+% Todos los  píxeles  que  tenga nuna  intensidad  mayor que  un  determinado  umbral.
+% Asignar inicialmente el valor 0 a este umbral e ir aumentándolo progresivamente.
+
+% Configuración dispositivo de captura
+video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
+video.ReturnedColorSpace = 'rgb';
+
+% Forma de trabajo: grabación continua
+video.TriggerRepeat=Inf;
+video.FramesPerTrigger=1; % 2 frames por disparo
+video.FrameGrabInterval=6; %30/6=5fps 
+
+preview(video)
+
+% Capturamos 50 frames (10s)
+start(video);
+
+umbral=0;
+while(video.FramesAcquired < 50)
+    
+    I=getdata(video,1);
+    R = double(I(:,:,1));
+    G = double(I(:,:,2));
+    B = double(I(:,:,3));
+
+    Intensidad = uint8((R+G+B) / 3);
+    
+    imshow(Intensidad>umbral);
+
+    umbral = umbral+5;
+
+end
+
+stop(video);
+
+%% EJERCICIO 5
+% Las diferencias que se producen entre los distintos frames 
+% que captura la webcam(utilizar la instrucción imabsdiff).
+
+% Configuración dispositivo de captura
+video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
+video.ReturnedColorSpace = 'rgb';
+
+% Forma de trabajo: grabación continua
+video.TriggerRepeat=Inf;
+video.FramesPerTrigger=1; % 2 frames por disparo
+video.FrameGrabInterval=6; %30/6=5fps 
+
+preview(video)
+
+% Capturamos 50 frames (10s)
+start(video);
+
+diferencia = uint8(zeros(360,640,3));
+
+while(video.FramesAcquired < 50)
+    
+    I=getdata(video,1);
+    diferencia = imabsdiff(I, diferencia);
+    
+    imshow(diferencia);
+
+end
+
+stop(video);
 
 
