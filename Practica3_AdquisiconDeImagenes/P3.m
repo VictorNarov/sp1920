@@ -241,7 +241,7 @@ while(video.FramesAcquired < 150)
     
     movimiento = (diferencia > umbral);
     
-    imshow(diferencia);
+    imshow(movimiento);
 
     frame_ant = frame;
 end
@@ -253,6 +253,57 @@ stop(video);
 % El  seguimiento  debe  visualizarse  a  través  de  un punto rojo situado en el centroide del objeto.
 
 
+% Configuración dispositivo de captura
+video=videoinput('winvideo',1,'RGB24_640x480'); % 30 fps
+video.ReturnedColorSpace = 'grayscale';
+preview(video);
+% Forma de trabajo: grabación continua
+video.TriggerRepeat=Inf;
+
+video.FrameGrabInterval=2; %30/2=15fps 
+
+umbral = 100;
+diferencia = uint8(zeros(360,640));
+
+% Capturamos 150 frames (10s)
+start(video);
+
+frame_ant = getdata(video,1); %Inicializamos el frame
+
+while(video.FramesAcquired < 300)
+    
+    frame=getdata(video,1);
+    diferencia = imabsdiff(frame, frame_ant);
+    
+    movimiento = (diferencia > umbral); % Matriz binaria
+    
+    %Obtenemos sus objetos etiquetados y las propiedades
+    [IEtiq, N] = bwlabel(movimiento);
+    
+    if N>0 % Hay algun movimiento
+        stats = regionprops(IEtiq, 'Area', 'Centroid');
+        centroides = cat(1,stats.Centroid);
+        areas = cat(1,stats.Area);
+
+        mayor_objeto = find(areas==max(areas)); % Indice
+
+        centroide_mayor_x = centroides(mayor_objeto,1); 
+        centroide_mayor_y = centroides(mayor_objeto,2); 
+    
+    else
+        centroide_mayor_x=1;
+        centroide_mayor_y=1;
+    end
+    
+    frame_ant=frame;
+    
+    subplot(1,2,1), imshow(frame); hold on, plot(centroide_mayor_x, centroide_mayor_y, 'R*'), hold off;
+    subplot(1,2,2), imshow(movimiento); hold on, plot(centroide_mayor_x, centroide_mayor_y, 'R*'), hold off;
+    
+   
+end
+
+stop(video);
 
 
 
