@@ -3,7 +3,7 @@
 % ?Matriz  Ib  binaria  de  0's  y  1's de  las  mismas  dimensiones  (filas  y  columnas)  que I
 % ?Color: vector con 3 valores de 0 a 255.
 % La   función   debe   visualizar   la   Imagen   I   con   los   píxeles   de   Ib   con   el   color especificado.
-function cambiaPixeles(I, Ib, color)
+function funcion_visualiza(I, Ib, color)
 
 % [f, c] = find(Ib==1);
 % I(f,c,1) = color(1);

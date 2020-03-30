@@ -120,32 +120,31 @@ subplot(2,2,4), imshow(cell2mat(Imagen{3}));
 
 % Configuración dispositivo de captura
 video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
-video.ReturnedColorSpace = 'rgb';
+video.ReturnedColorSpace = 'grayscale';
 
 % Forma de trabajo: grabación continua
 video.TriggerRepeat=Inf;
-video.FramesPerTrigger=1; % 2 frames por disparo
-video.FrameGrabInterval=6; %30/6=5fps 
+video.FrameGrabInterval=1; %30/6=5fps 
 
 preview(video)
 
 % Capturamos 50 frames (10s)
 start(video);
-gamma = 2.5;
+umbral=0:255;
 
-while(video.FramesAcquired < 50)
+for i=1:length(umbral)
     
     I=getdata(video,1);
-    imshow(imadjust(I,[],[],gamma));
+    Ib=(I>umbral(i));
     
-    gamma = gamma-0.05;
+    imshow(Ib);
 
 end
 
 stop(video);
 
 %% EJERCICIO 4
-% Todos los  píxeles  que  tenga nuna  intensidad  mayor que  un  determinado  umbral.
+% Todos los  píxeles  que  tengan una  intensidad  mayor que  un  determinado  umbral.
 % Asignar inicialmente el valor 0 a este umbral e ir aumentándolo progresivamente.
 
 % Configuración dispositivo de captura
@@ -198,17 +197,63 @@ preview(video)
 % Capturamos 50 frames (10s)
 start(video);
 
-diferencia = uint8(zeros(360,640,3));
+diferencia = uint8(zeros(360,640));
 
 while(video.FramesAcquired < 50)
     
     I=getdata(video,1);
-    diferencia = imabsdiff(I, diferencia);
+    Ig = rgb2gray(I);
+    diferencia = imabsdiff(Ig, diferencia);
     
     imshow(diferencia);
 
 end
 
 stop(video);
+
+
+%% EJERCICIO 6
+% El movimiento más significativo a partir de diferencias de imágenes de intensidad..
+
+% Configuración dispositivo de captura
+video=videoinput('winvideo',1,'YUY2_640x360'); % 30 fps
+video.ReturnedColorSpace = 'grayscale';
+
+% Forma de trabajo: grabación continua
+video.TriggerRepeat=Inf;
+video.FramesPerTrigger=1; % 2 frames por disparo
+video.FrameGrabInterval=2; %30/2=15fps 
+
+preview(video)
+
+umbral = 100;
+diferencia = uint8(zeros(360,640));
+
+% Capturamos 150 frames (10s)
+start(video);
+
+frame_ant = getdata(video,1); %Inicializamos el frame
+
+while(video.FramesAcquired < 150)
+    
+    frame=getdata(video,1);
+    diferencia = imabsdiff(frame, frame_ant);
+    
+    movimiento = (diferencia > umbral);
+    
+    imshow(diferencia);
+
+    frame_ant = frame;
+end
+
+stop(video);
+
+%% 7.  El   seguimiento   del   movimiento   del   objeto   mayor   detectado 
+% en   las   diferencias significativas de  imágenes  de  intensidad.
+% El  seguimiento  debe  visualizarse  a  través  de  un punto rojo situado en el centroide del objeto.
+
+
+
+
 
 
